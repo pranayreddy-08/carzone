@@ -2,16 +2,23 @@ from django import forms
 from .models import Car
 
 
+CONDITION_CHOICES = [
+    ('', '-- Select Condition --'),
+    ('New', 'New'),
+    ('Used', 'Used'),
+    ('Certified Pre-Owned', 'Certified Pre-Owned'),
+]
+
+
 class CarPostForm(forms.ModelForm):
+    condition = forms.ChoiceField(
+        choices=CONDITION_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
     class Meta:
         model = Car
         exclude = ['owner', 'is_featured', 'is_approved', 'created_date']
-        widgets = {
-            'state': forms.Select(attrs={'class': 'form-control'}),
-            'year': forms.Select(attrs={'class': 'form-control'}),
-            'condition': forms.Select(attrs={'class': 'form-control', 'choices': [('New','New'),('Used','Used')]}),
-            'doors': forms.Select(attrs={'class': 'form-control'}),
-        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
