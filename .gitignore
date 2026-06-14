@@ -3,3 +3,5 @@ project_dump.json
 .env
 __pycache__/
 *.pyc
+venv/
+env/

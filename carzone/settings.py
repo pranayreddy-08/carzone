@@ -25,8 +25,7 @@ SECRET_KEY = '934nw3r62@!m0^ksgw3#31tntglnr%td+-_b89xpu2@q2zqv=d'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-ALLOWED_HOSTS = ['floating-badlands-41165.herokuapp.com', 'carzoneapp.co', 'www.carzoneapp.co']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 LOGIN_REDIRECT_URL = 'dashboard'
 
@@ -91,17 +90,23 @@ WSGI_APPLICATION = 'carzone.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'carzone_db',
-#         'USER': 'postgres',
-#         'PASSWORD': '######',
-#         'HOST': 'localhost',
-#     }
-# }
+# --- CHANGE 1 -------------------------------------------------------------
+# Local development uses SQLite (the db.sqlite3 file already in the project).
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
 
-DATABASES = {'default': dj_database_url.config(default='postgres://postgres:######@localhost/carzone_db')}
+# When deployed (Render / Heroku / etc.) a DATABASE_URL environment variable
+# will be set, and the line below automatically overrides the SQLite config
+# above with that Postgres database. Locally, DATABASE_URL is not set, so
+# dj_database_url returns an empty config and SQLite stays in effect.
+db_from_env = dj_database_url.config(conn_max_age=600)
+if db_from_env:
+    DATABASES['default'] = db_from_env
+# --------------------------------------------------------------------------
 
 
 # Password validation
@@ -168,4 +173,12 @@ EMAIL_USE_TLS = True
 
 
 # Whitenoise settings
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# --- CHANGE 2 -------------------------------------------------------------
+# This is a PRODUCTION-only optimization: it serves pre-compressed, hashed
+# static files looked up from a manifest, which requires running
+#   python manage.py collectstatic
+# first. It is commented out for local development so the dev server serves
+# static files directly (no manifest needed). Re-enable it for deployment
+# after you run collectstatic.
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# --------------------------------------------------------------------------
