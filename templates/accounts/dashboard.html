@@ -17,44 +17,88 @@
 </div>
 <!-- Sub Banner end -->
 
-
-<!--   Dashboard Start   -->
-
 <div class="container mt-50 mb-50">
-  {% include 'includes/messages.html' %}
-	<div class="main-title" style="text-align:left !important;">
-            <h1>Welcome <span>{{user.first_name}}</span></h1>
-            <p>Here are the cars that you have inquired about</p>
-        </div>
-        {% if inquiries %}
-            <table class="table table-hover">
-              <thead>
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">Car Name</th>
-                <th scope="col">Location</th>
-                <th scope="col">Action</th>
-              </tr>
-              </thead>
-              <tbody>
+    {% include 'includes/messages.html' %}
 
-              {% for inquiry in inquiries %}
+    <div class="main-title" style="text-align:left !important;">
+        <h1>Welcome <span>{{user.first_name}}</span></h1>
+    </div>
+
+    <!-- My Listings Section -->
+    <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
+        <h4>My Car Listings</h4>
+        <a href="{% url 'post_car' %}" class="btn button-theme"><i class="fa fa-plus"></i> Post a Car</a>
+    </div>
+
+    {% if listings %}
+        <table class="table table-hover mb-5">
+            <thead class="thead-dark">
                 <tr>
-                  <!-- <th scope="row">{{ forloop.counter }}</th> -->
-                  <th scope="row">1</th>
-                  <td>{{inquiry.car_title}}</td>
-                  <td>{{inquiry.city}}</td>
-                  <td><a href="{% url 'car_detail' inquiry.car_id %}" class="btn btn-outline-dark">View Car</a></td>
+                    <th>#</th>
+                    <th>Car</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                    <th>Action</th>
                 </tr>
-              {% endfor %}
-              </tbody>
-            </table>
-        {% else %}
-          <h4>You have no inquiries</h4>
-        {% endif %}
+            </thead>
+            <tbody>
+                {% for car in listings %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{ car.car_title }}</td>
+                    <td>${{ car.price|floatformat:0 }}</td>
+                    <td>
+                        {% if car.is_approved %}
+                            <span class="badge badge-success">Approved</span>
+                        {% else %}
+                            <span class="badge badge-warning">Pending Approval</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if car.is_approved %}
+                            <a href="{% url 'car_detail' car.id %}" class="btn btn-sm btn-outline-dark">View</a>
+                        {% endif %}
+                        <form method="POST" action="{% url 'delete_car' car.id %}" style="display:inline;" onsubmit="return confirm('Delete this listing?')">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-light mb-5">
+            You have no listings yet. <a href="{% url 'post_car' %}">Post your first car</a>.
+        </div>
+    {% endif %}
 
+    <!-- My Inquiries Section -->
+    <h4 class="mb-3">My Inquiries</h4>
+    {% if inquiries %}
+        <table class="table table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Car Name</th>
+                    <th>Location</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for inquiry in inquiries %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{ inquiry.car_title }}</td>
+                    <td>{{ inquiry.city }}</td>
+                    <td><a href="{% url 'car_detail' inquiry.car_id %}" class="btn btn-sm btn-outline-dark">View Car</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-light">You have no inquiries.</div>
+    {% endif %}
 </div>
-
-<!--   Dashboard End   -->
 
 {% endblock %}

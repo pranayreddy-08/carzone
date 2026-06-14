@@ -1,10 +1,13 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from .models import Car
+from .forms import CarPostForm
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
 # Create your views here.
 def cars(request):
-    cars = Car.objects.order_by('-created_date')
+    cars = Car.objects.filter(is_approved=True).order_by('-created_date')
     paginator = Paginator(cars, 4)
     page = request.GET.get('page')
     paged_cars = paginator.get_page(page)
@@ -33,7 +36,7 @@ def car_detail(request, id):
 
 
 def search(request):
-    cars = Car.objects.order_by('-created_date')
+    cars = Car.objects.filter(is_approved=True).order_by('-created_date')
 
     model_search = Car.objects.values_list('model', flat=True).distinct()
     city_search = Car.objects.values_list('city', flat=True).distinct()
@@ -81,3 +84,28 @@ def search(request):
         'transmission_search': transmission_search,
     }
     return render(request, 'cars/search.html', data)
+
+
+@login_required(login_url='login')
+def post_car(request):
+    if request.method == 'POST':
+        form = CarPostForm(request.POST, request.FILES)
+        if form.is_valid():
+            car = form.save(commit=False)
+            car.owner = request.user
+            car.is_approved = False
+            car.save()
+            messages.success(request, 'Your car has been submitted and is pending admin approval.')
+            return redirect('dashboard')
+    else:
+        form = CarPostForm()
+    return render(request, 'cars/post_car.html', {'form': form})
+
+
+@login_required(login_url='login')
+def delete_car(request, id):
+    car = get_object_or_404(Car, pk=id, owner=request.user)
+    if request.method == 'POST':
+        car.delete()
+        messages.success(request, 'Your listing has been deleted.')
+    return redirect('dashboard')

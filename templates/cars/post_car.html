@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} | Post Your Car {% endblock %}
+{% block content %}
+
+<!-- Sub banner start -->
+<div class="sub-banner overview-bgi">
+    <div class="container breadcrumb-area">
+        <div class="breadcrumb-areas">
+            <h1>Post Your Car</h1>
+            <ul class="breadcrumbs">
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li class="active">Post Car</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- Sub Banner end -->
+
+<div class="container mt-50 mb-50">
+    {% include 'includes/messages.html' %}
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-sm">
+                <div class="card-header" style="background-color:#c8272d; color:#fff;">
+                    <h4 class="mb-0"><i class="fa fa-car"></i> List Your Car for Sale</h4>
+                    <small>Your listing will be reviewed and published once approved by admin.</small>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <h5 class="mb-3" style="color:#c8272d;">Basic Information</h5>
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label>Car Title *</label>
+                                {{ form.car_title }}
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <label>Year *</label>
+                                {{ form.year }}
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <label>Condition *</label>
+                                {{ form.condition }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 form-group">
+                                <label>Model *</label>
+                                {{ form.model }}
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label>Color *</label>
+                                {{ form.color }}
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label>Price ($) *</label>
+                                {{ form.price }}
+                            </div>
+                        </div>
+
+                        <hr>
+                        <h5 class="mb-3" style="color:#c8272d;">Location</h5>
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label>State *</label>
+                                {{ form.state }}
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>City *</label>
+                                {{ form.city }}
+                            </div>
+                        </div>
+
+                        <hr>
+                        <h5 class="mb-3" style="color:#c8272d;">Vehicle Details</h5>
+                        <div class="row">
+                            <div class="col-md-4 form-group">
+                                <label>Body Style *</label>
+                                {{ form.body_style }}
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label>Engine *</label>
+                                {{ form.engine }}
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label>Transmission *</label>
+                                {{ form.transmission }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 form-group">
+                                <label>Fuel Type *</label>
+                                {{ form.fuel_type }}
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <label>Interior *</label>
+                                {{ form.interior }}
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <label>Doors *</label>
+                                {{ form.doors }}
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <label>Passengers *</label>
+                                {{ form.passengers }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group">
+                                <label>Miles *</label>
+                                {{ form.miles }}
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label>Mileage (per litre) *</label>
+                                {{ form.milage }}
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label>No. of Owners *</label>
+                                {{ form.no_of_owners }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label>VIN No *</label>
+                                {{ form.vin_no }}
+                            </div>
+                        </div>
+
+                        <hr>
+                        <h5 class="mb-3" style="color:#c8272d;">Features</h5>
+                        <div class="form-group">
+                            {{ form.features }}
+                        </div>
+
+                        <hr>
+                        <h5 class="mb-3" style="color:#c8272d;">Description</h5>
+                        <div class="form-group">
+                            {{ form.description }}
+                        </div>
+
+                        <hr>
+                        <h5 class="mb-3" style="color:#c8272d;">Photos</h5>
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label>Main Photo *</label>
+                                {{ form.car_photo }}
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>Photo 2</label>
+                                {{ form.car_photo_1 }}
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>Photo 3</label>
+                                {{ form.car_photo_2 }}
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>Photo 4</label>
+                                {{ form.car_photo_3 }}
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>Photo 5</label>
+                                {{ form.car_photo_4 }}
+                            </div>
+                        </div>
+
+                        <div class="mt-3">
+                            <button type="submit" class="btn button-theme">Submit for Approval</button>
+                            <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary ml-2">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

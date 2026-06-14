@@ -2,6 +2,7 @@ from django.db import models
 from datetime import datetime
 from ckeditor.fields import RichTextField
 from multiselectfield import MultiSelectField
+from django.contrib.auth.models import User
 
 # Create your models here.
 class Car(models.Model):
@@ -115,6 +116,8 @@ class Car(models.Model):
     fuel_type = models.CharField(max_length=50)
     no_of_owners = models.CharField(max_length=100)
     is_featured = models.BooleanField(default=False)
+    is_approved = models.BooleanField(default=False)
+    owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='cars')
     created_date = models.DateTimeField(default=datetime.now, blank=True)
 
     def __str__(self):
